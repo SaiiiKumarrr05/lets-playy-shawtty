@@ -1,0 +1,240 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&display=swap');
+
+:root {
+  --neon-cyan:    #00fff5;
+  --neon-pink:    #ff006e;
+  --neon-yellow:  #ffe600;
+  --neon-green:   #00ff88;
+  --neon-orange:  #ff6a00;
+  --dark:         #000a06;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #000;
+  font-family: 'Press Start 2P', monospace;
+}
+
+#arena {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#webcam {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1); /* mirror */
+  filter: brightness(0.55) contrast(1.1) saturate(0.8);
+}
+
+#game-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ── HUD corners ── */
+#hud-tl, #hud-tr {
+  position: absolute;
+  top: 20px;
+  padding: 12px 18px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid var(--neon-cyan);
+  box-shadow: 0 0 14px var(--neon-cyan), inset 0 0 10px rgba(0,255,245,0.05);
+  backdrop-filter: blur(4px);
+  min-width: 110px;
+  pointer-events: none;
+}
+
+#hud-tl { left: 20px; }
+#hud-tr { right: 20px; text-align: right; }
+
+.hud-label {
+  font-size: 0.42rem;
+  letter-spacing: 3px;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 6px var(--neon-cyan);
+  margin-bottom: 4px;
+}
+
+.hud-value {
+  font-family: 'Orbitron', monospace;
+  font-weight: 900;
+  font-size: 1.5rem;
+  color: var(--neon-yellow);
+  text-shadow: 0 0 10px var(--neon-yellow), 0 0 30px rgba(255,230,0,0.3);
+  letter-spacing: 2px;
+}
+
+/* ── Bottom center status ── */
+#hud-bc {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+#status-text {
+  font-size: 0.55rem;
+  letter-spacing: 3px;
+  color: var(--neon-green);
+  text-shadow: 0 0 10px var(--neon-green), 0 0 30px rgba(0,255,136,0.4);
+  text-align: center;
+  animation: pulse-glow 2s ease-in-out infinite;
+  white-space: nowrap;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+/* ── Gesture badge (top center) ── */
+#gesture-badge {
+  position: absolute;
+  top: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2.4rem;
+  pointer-events: none;
+  filter: drop-shadow(0 0 10px rgba(0,255,245,0.8));
+  transition: transform 0.15s ease;
+  z-index: 10;
+}
+
+/* ── Mode badge ── */
+#mode-badge {
+  position: absolute;
+  top: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.38rem;
+  letter-spacing: 4px;
+  padding: 5px 14px;
+  border: 1px solid currentColor;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+#mode-badge.draw   { color: var(--neon-pink);   border-color: var(--neon-pink);   text-shadow: 0 0 8px var(--neon-pink);   box-shadow: 0 0 10px var(--neon-pink); }
+#mode-badge.play   { color: var(--neon-green);  border-color: var(--neon-green);  text-shadow: 0 0 8px var(--neon-green);  box-shadow: 0 0 10px var(--neon-green); }
+#mode-badge.pause  { color: var(--neon-yellow); border-color: var(--neon-yellow); text-shadow: 0 0 8px var(--neon-yellow); box-shadow: 0 0 10px var(--neon-yellow); animation: pulse-glow 0.8s infinite; }
+#mode-badge.wait   { color: #555; border-color: #333; }
+
+/* ── Score pop ── */
+#score-pop {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Orbitron', monospace;
+  font-weight: 900;
+  font-size: 3rem;
+  color: var(--neon-yellow);
+  text-shadow: 0 0 30px var(--neon-yellow);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 20;
+}
+
+#score-pop.show {
+  opacity: 1;
+  animation: pop-up 1.2s ease-out forwards;
+}
+
+@keyframes pop-up {
+  0%   { opacity: 1; transform: translate(-50%, -50%) scale(0.8); }
+  30%  { opacity: 1; transform: translate(-50%, -60%) scale(1.15); }
+  80%  { opacity: 0.8; transform: translate(-50%, -80%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -100%) scale(0.9); }
+}
+
+/* ── CRT effects ── */
+#scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.12) 2px,
+    rgba(0,0,0,0.12) 4px
+  );
+  pointer-events: none;
+  z-index: 50;
+}
+
+#vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center,
+    transparent 50%,
+    rgba(0,0,0,0.65) 100%
+  );
+  pointer-events: none;
+  z-index: 51;
+}
+
+/* ── Retro grid overlay on play field ── */
+.grid-overlay {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* ── Flicker title on game over ── */
+.gameover-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.72);
+  z-index: 60;
+  gap: 24px;
+}
+
+.gameover-title {
+  font-family: 'Orbitron', monospace;
+  font-weight: 900;
+  font-size: clamp(2rem, 6vw, 5rem);
+  color: var(--neon-pink);
+  text-shadow: 0 0 20px var(--neon-pink), 0 0 60px rgba(255,0,110,0.5);
+  letter-spacing: 6px;
+  animation: flicker 3s infinite;
+}
+
+.gameover-score {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(1rem, 3vw, 2rem);
+  color: var(--neon-yellow);
+  text-shadow: 0 0 10px var(--neon-yellow);
+}
+
+.gameover-sub {
+  font-size: 0.5rem;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 8px var(--neon-cyan);
+  letter-spacing: 3px;
+  animation: pulse-glow 1.5s infinite;
+}
+
+@keyframes flicker {
+  0%,92%,100% { opacity: 1; }
+  93% { opacity: 0.2; }
+  94% { opacity: 1; }
+  97% { opacity: 0.4; }
+  98% { opacity: 1; }
+}

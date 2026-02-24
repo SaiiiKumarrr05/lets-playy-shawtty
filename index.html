@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AIR TETRIS</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Fullscreen AR canvas stack -->
+  <div id="arena">
+    <video id="webcam" autoplay muted playsinline></video>
+    <!-- Game drawn on top of webcam -->
+    <canvas id="game-canvas"></canvas>
+    <!-- HUD overlays -->
+    <div id="hud-tl">
+      <div class="hud-label">SCORE</div>
+      <div class="hud-value" id="score">0</div>
+    </div>
+    <div id="hud-tr">
+      <div class="hud-label">LEVEL</div>
+      <div class="hud-value" id="level">1</div>
+      <div class="hud-label" style="margin-top:8px">LINES</div>
+      <div class="hud-value" id="lines">0</div>
+    </div>
+    <div id="hud-bc">
+      <div id="status-text">SHOW ✌️ TO BEGIN</div>
+    </div>
+    <div id="gesture-badge"></div>
+    <div id="mode-badge">WAITING</div>
+    <div id="score-pop"></div>
+    <!-- Scanlines -->
+    <div id="scanlines"></div>
+    <div id="vignette"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/hand-pose-detection@2.0.1/dist/hand-pose-detection.js"></script>
+  <script src="tetris.js"></script>
+  <script src="gestures.js"></script>
+  <script src="drawing.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
